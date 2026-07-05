@@ -1,0 +1,9 @@
+{
+  "name": "Presensi Guru Pondok",
+  "description": "Sistem Presensi Guru Pondok dengan login realtime, presensi berbasis lokasi & selfie, dashboard admin, manajemen jadwal, dan asisten AI pintar.",
+  "requestFramePermissions": [
+    "camera",
+    "geolocation"
+  ],
+  "majorCapabilities": []
+}
