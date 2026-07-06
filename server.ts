@@ -1,6 +1,7 @@
 import express from "express";
 import path from "path";
 import { createServer as createViteServer } from "vite";
+import fs from "fs";
 import {
   loadDB,
   saveDB,
@@ -16,6 +17,40 @@ import {
   AttendanceLog
 } from "./src/db/db-store.js";
 import { createSupabaseServerClient } from "./src/lib/supabase-server.js";
+
+// Load .env file into process.env if it exists
+const loadEnvFile = () => {
+  const envPath = path.join(process.cwd(), ".env");
+  if (fs.existsSync(envPath)) {
+    const envContent = fs.readFileSync(envPath, "utf-8");
+    const lines = envContent.split("\n");
+    for (const line of lines) {
+      const trimmed = line.trim();
+      // Skip comments and empty lines
+      if (!trimmed || trimmed.startsWith("#")) continue;
+      
+      const equalsIndex = trimmed.indexOf("=");
+      if (equalsIndex === -1) continue;
+      
+      const key = trimmed.substring(0, equalsIndex).trim();
+      let value = trimmed.substring(equalsIndex + 1).trim();
+      
+      // Remove quotes if present
+      if ((value.startsWith('"') && value.endsWith('"')) || 
+          (value.startsWith("'") && value.endsWith("'"))) {
+        value = value.slice(1, -1);
+      }
+      
+      // Only set if not already set (process.env takes priority)
+      if (!process.env[key]) {
+        process.env[key] = value;
+      }
+    }
+  }
+};
+
+// Execute loader at startup
+loadEnvFile();
 
 // Haversine formula to compute distance in meters
 function calculateHaversine(lat1: number, lon1: number, lat2: number, lon2: number): number {
@@ -45,6 +80,57 @@ app.get("/api/supabase/status", (req, res) => {
     appName: process.env.VITE_APP_NAME || "Presensi Guru Pondok",
     appEnv: process.env.VITE_APP_ENV || process.env.NODE_ENV || "development"
   });
+});
+
+// Comprehensive Diagnostic Endpoint
+app.get("/api/diagnostic", async (req, res) => {
+  const diagnostic = {
+    timestamp: new Date().toISOString(),
+    environment: {
+      nodeEnv: process.env.NODE_ENV || "development",
+      appName: process.env.VITE_APP_NAME || "Presensi Guru Pondok",
+      appEnv: process.env.VITE_APP_ENV || "development",
+      port: PORT
+    },
+    supabase: {
+      urlConfigured: Boolean(process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL),
+      url: process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL ? "✓ Set" : "✗ Missing",
+      anonKeyConfigured: Boolean(process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY),
+      anonKey: process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY ? "✓ Set" : "✗ Missing",
+      serviceRoleKeyConfigured: Boolean(process.env.VITE_SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY),
+      serviceRoleKey: process.env.VITE_SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY ? "✓ Set" : "✗ Missing",
+      clientCreated: Boolean(createSupabaseServerClient())
+    },
+    database: {
+      localDbLoaded: Boolean(db && db.users),
+      usersCount: db ? db.users?.length || 0 : 0,
+      teachersCount: db ? db.teachers?.length || 0 : 0,
+      schedulesCount: db ? db.schedule?.length || 0 : 0,
+      attendanceCount: db ? db.attendance?.length || 0 : 0
+    },
+    features: {
+      aiProvider: process.env.VITE_AI_PROVIDER || "supabase",
+      aiApiKeyConfigured: Boolean(process.env.VITE_AI_API_KEY || process.env.AI_API_KEY)
+    }
+  };
+
+  // Test Supabase connectivity if client is available
+  const client = createSupabaseServerClient();
+  if (client) {
+    try {
+      const { data, error } = await client.from("users").select("count", { count: "exact" }).limit(1);
+      diagnostic.supabase.databaseReachable = !error;
+      diagnostic.supabase.databaseReachableError = error ? error.message : null;
+    } catch (err) {
+      diagnostic.supabase.databaseReachable = false;
+      diagnostic.supabase.databaseReachableError = err instanceof Error ? err.message : "Unknown error";
+    }
+  } else {
+    diagnostic.supabase.databaseReachable = false;
+    diagnostic.supabase.databaseReachableError = "Supabase client not initialized - missing URL or keys";
+  }
+
+  res.json(diagnostic);
 });
 
 // Initialize DB on boot

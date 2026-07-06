@@ -1,0 +1,483 @@
+{
+  "users": [
+    {
+      "id": "user-admin-1",
+      "email": "admin@pondok.com",
+      "password_hash": "admin@pondok1820",
+      "role": "admin",
+      "created_at": "2026-07-06T03:11:31.293Z",
+      "updated_at": "2026-07-06T03:11:31.294Z",
+      "deleted_at": null
+    },
+    {
+      "id": "user-teacher-1",
+      "email": "hizbullah@pondok.com",
+      "password_hash": "Hizbullah123",
+      "role": "guru",
+      "created_at": "2026-07-06T03:11:31.294Z",
+      "updated_at": "2026-07-06T03:11:31.294Z",
+      "deleted_at": null
+    },
+    {
+      "id": "user-teacher-2",
+      "email": "fauzi@pondok.com",
+      "password_hash": "Fauzi1234",
+      "role": "guru",
+      "created_at": "2026-07-06T03:11:31.294Z",
+      "updated_at": "2026-07-06T03:11:31.294Z",
+      "deleted_at": null
+    },
+    {
+      "id": "user-teacher-3",
+      "email": "karim@pondok.com",
+      "password_hash": "Karim1234",
+      "role": "guru",
+      "created_at": "2026-07-06T03:11:31.294Z",
+      "updated_at": "2026-07-06T03:11:31.294Z",
+      "deleted_at": null
+    },
+    {
+      "id": "user-teacher-4",
+      "email": "hasan@pondok.com",
+      "password_hash": "muhammadhasan",
+      "role": "guru",
+      "created_at": "2026-07-06T03:11:31.294Z",
+      "updated_at": "2026-07-06T03:11:31.294Z",
+      "deleted_at": null
+    }
+  ],
+  "teachers": [
+    {
+      "id": "teacher-1",
+      "user_id": "user-teacher-1",
+      "nama": "Muhammad Hizbullah",
+      "nip": "19920101",
+      "email": "hizbullah@pondok.com",
+      "no_hp": "081234567890",
+      "foto": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+      "status": "aktif",
+      "created_at": "2026-07-06T03:11:31.294Z",
+      "updated_at": "2026-07-06T03:11:31.294Z",
+      "deleted_at": null
+    },
+    {
+      "id": "teacher-2",
+      "user_id": "user-teacher-2",
+      "nama": "Ahmad Fauzi",
+      "nip": "19950505",
+      "email": "fauzi@pondok.com",
+      "no_hp": "081234567891",
+      "foto": "https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=150&auto=format&fit=crop&q=80",
+      "status": "aktif",
+      "created_at": "2026-07-06T03:11:31.294Z",
+      "updated_at": "2026-07-06T03:11:31.294Z",
+      "deleted_at": null
+    },
+    {
+      "id": "teacher-3",
+      "user_id": "user-teacher-3",
+      "nama": "Abdul Karim",
+      "nip": "19900808",
+      "email": "karim@pondok.com",
+      "no_hp": "081234567892",
+      "foto": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
+      "status": "aktif",
+      "created_at": "2026-07-06T03:11:31.294Z",
+      "updated_at": "2026-07-06T03:11:31.294Z",
+      "deleted_at": null
+    },
+    {
+      "id": "teacher-4",
+      "user_id": "user-teacher-4",
+      "nama": "Muhammad Hasan",
+      "nip": "19881212",
+      "email": "hasan@pondok.com",
+      "no_hp": "081234567893",
+      "foto": "https://images.unsplash.com/photo-1628157582853-a796fa650a6a?w=150&auto=format&fit=crop&q=80",
+      "status": "aktif",
+      "created_at": "2026-07-06T03:11:31.294Z",
+      "updated_at": "2026-07-06T03:11:31.294Z",
+      "deleted_at": null
+    }
+  ],
+  "subjects": [
+    {
+      "id": "subject-1",
+      "nama_mapel": "Tarikh Islam",
+      "deleted_at": null
+    },
+    {
+      "id": "subject-2",
+      "nama_mapel": "Al-Qur'an",
+      "deleted_at": null
+    },
+    {
+      "id": "subject-3",
+      "nama_mapel": "Fiqih",
+      "deleted_at": null
+    },
+    {
+      "id": "subject-4",
+      "nama_mapel": "Aqidah Akhlak",
+      "deleted_at": null
+    },
+    {
+      "id": "subject-5",
+      "nama_mapel": "Bahasa Arab",
+      "deleted_at": null
+    }
+  ],
+  "classes": [
+    {
+      "id": "class-1",
+      "nama_kelas": "MTs 2 PA A",
+      "tingkat": "MTs",
+      "gedung": "Gedung Abu Bakar",
+      "lokasi": "Madrasah Kaloran lt. 1",
+      "latitude": -7.29135,
+      "longitude": 110.18341,
+      "deleted_at": null
+    },
+    {
+      "id": "class-2",
+      "nama_kelas": "MTs 2 PA B",
+      "tingkat": "MTs",
+      "gedung": "Gedung Abu Bakar",
+      "lokasi": "Madrasah Kaloran lt. 1",
+      "latitude": -7.29135,
+      "longitude": 110.18341,
+      "deleted_at": null
+    },
+    {
+      "id": "class-3",
+      "nama_kelas": "MA 1 PA A",
+      "tingkat": "MA",
+      "gedung": "Gedung Umar Bin Khattab",
+      "lokasi": "Madrasah Kaloran lt. 2",
+      "latitude": -7.29135,
+      "longitude": 110.18341,
+      "deleted_at": null
+    },
+    {
+      "id": "class-4",
+      "nama_kelas": "MTs 1 PI A",
+      "tingkat": "MTs",
+      "gedung": "Gedung Aisyah (Putri)",
+      "lokasi": "Komp. Putri Kaloran lt. 1",
+      "latitude": -7.29135,
+      "longitude": 110.18341,
+      "deleted_at": null
+    }
+  ],
+  "academic_years": [
+    {
+      "id": "ay-1",
+      "tahun": "2026-2027",
+      "status": "aktif",
+      "deleted_at": null
+    }
+  ],
+  "cawus": [
+    {
+      "id": "cawu-1",
+      "nama": "Cawu 1",
+      "status": "aktif",
+      "deleted_at": null
+    },
+    {
+      "id": "cawu-2",
+      "nama": "Cawu 2",
+      "status": "tidak_aktif",
+      "deleted_at": null
+    },
+    {
+      "id": "cawu-3",
+      "nama": "Cawu 3",
+      "status": "tidak_aktif",
+      "deleted_at": null
+    }
+  ],
+  "hissohs": [
+    {
+      "id": "hissoh-1",
+      "nama": "HISSOH 01",
+      "jam_mulai_wib": "07:00",
+      "jam_selesai_wib": "07:45",
+      "jam_mulai_istw": "07:00",
+      "jam_selesai_istw": "07:45",
+      "deleted_at": null
+    },
+    {
+      "id": "hissoh-2",
+      "nama": "HISSOH 02",
+      "jam_mulai_wib": "08:00",
+      "jam_selesai_wib": "08:45",
+      "jam_mulai_istw": "08:15",
+      "jam_selesai_istw": "09:00",
+      "deleted_at": null
+    },
+    {
+      "id": "hissoh-3",
+      "nama": "HISSOH 03",
+      "jam_mulai_wib": "09:00",
+      "jam_selesai_wib": "09:45",
+      "jam_mulai_istw": "09:30",
+      "jam_selesai_istw": "10:15",
+      "deleted_at": null
+    },
+    {
+      "id": "hissoh-4",
+      "nama": "HISSOH 04",
+      "jam_mulai_wib": "10:00",
+      "jam_selesai_wib": "10:45",
+      "jam_mulai_istw": "10:45",
+      "jam_selesai_istw": "11:30",
+      "deleted_at": null
+    }
+  ],
+  "schedule": [
+    {
+      "id": "sched-1",
+      "teacher_id": "teacher-1",
+      "subject_id": "subject-1",
+      "class_id": "class-2",
+      "academic_year_id": "ay-1",
+      "hari": "Senin",
+      "jam_mulai": "07:00",
+      "jam_selesai": "07:45",
+      "latitude": -7.29135,
+      "longitude": 110.18341,
+      "radius": 100,
+      "status": "aktif",
+      "created_at": "2026-07-06T03:11:31.294Z",
+      "deleted_at": null
+    },
+    {
+      "id": "sched-2",
+      "teacher_id": "teacher-1",
+      "subject_id": "subject-2",
+      "class_id": "class-1",
+      "academic_year_id": "ay-1",
+      "hari": "Senin",
+      "jam_mulai": "08:00",
+      "jam_selesai": "08:45",
+      "latitude": -7.29135,
+      "longitude": 110.18341,
+      "radius": 100,
+      "status": "aktif",
+      "created_at": "2026-07-06T03:11:31.294Z",
+      "deleted_at": null
+    },
+    {
+      "id": "sched-3",
+      "teacher_id": "teacher-1",
+      "subject_id": "subject-2",
+      "class_id": "class-2",
+      "academic_year_id": "ay-1",
+      "hari": "Senin",
+      "jam_mulai": "09:00",
+      "jam_selesai": "09:45",
+      "latitude": -7.29135,
+      "longitude": 110.18341,
+      "radius": 100,
+      "status": "aktif",
+      "created_at": "2026-07-06T03:11:31.294Z",
+      "deleted_at": null
+    },
+    {
+      "id": "sched-4",
+      "teacher_id": "teacher-1",
+      "subject_id": "subject-3",
+      "class_id": "class-3",
+      "academic_year_id": "ay-1",
+      "hari": "Selasa",
+      "jam_mulai": "07:45",
+      "jam_selesai": "08:30",
+      "latitude": -7.29135,
+      "longitude": 110.18341,
+      "radius": 100,
+      "status": "aktif",
+      "created_at": "2026-07-06T03:11:31.294Z",
+      "deleted_at": null
+    },
+    {
+      "id": "sched-5",
+      "teacher_id": "teacher-2",
+      "subject_id": "subject-3",
+      "class_id": "class-1",
+      "academic_year_id": "ay-1",
+      "hari": "Senin",
+      "jam_mulai": "07:00",
+      "jam_selesai": "07:45",
+      "latitude": -7.29135,
+      "longitude": 110.18341,
+      "radius": 100,
+      "status": "aktif",
+      "created_at": "2026-07-06T03:11:31.294Z",
+      "deleted_at": null
+    },
+    {
+      "id": "sched-6",
+      "teacher_id": "teacher-2",
+      "subject_id": "subject-4",
+      "class_id": "class-4",
+      "academic_year_id": "ay-1",
+      "hari": "Senin",
+      "jam_mulai": "08:45",
+      "jam_selesai": "09:30",
+      "latitude": -7.29135,
+      "longitude": 110.18341,
+      "radius": 100,
+      "status": "aktif",
+      "created_at": "2026-07-06T03:11:31.294Z",
+      "deleted_at": null
+    },
+    {
+      "id": "sched-7",
+      "teacher_id": "teacher-3",
+      "subject_id": "subject-5",
+      "class_id": "class-2",
+      "academic_year_id": "ay-1",
+      "hari": "Senin",
+      "jam_mulai": "07:45",
+      "jam_selesai": "08:30",
+      "latitude": -7.29135,
+      "longitude": 110.18341,
+      "radius": 100,
+      "status": "aktif",
+      "created_at": "2026-07-06T03:11:31.294Z",
+      "deleted_at": null
+    }
+  ],
+  "attendance": [
+    {
+      "id": "att-1",
+      "schedule_id": "sched-1",
+      "teacher_id": "teacher-1",
+      "tanggal": "2026-06-29",
+      "status": "Hadir",
+      "catatan": "Presensi tepat waktu",
+      "created_at": "2026-06-29T07:02:15.000Z",
+      "deleted_at": null
+    },
+    {
+      "id": "att-2",
+      "schedule_id": "sched-2",
+      "teacher_id": "teacher-1",
+      "tanggal": "2026-06-29",
+      "status": "Hadir",
+      "catatan": "Materi Al-Quran Juz 30",
+      "created_at": "2026-06-29T08:01:40.000Z",
+      "deleted_at": null
+    },
+    {
+      "id": "att-3",
+      "schedule_id": "sched-5",
+      "teacher_id": "teacher-2",
+      "tanggal": "2026-06-29",
+      "status": "Hadir",
+      "catatan": "Presensi lancar",
+      "created_at": "2026-06-29T07:05:33.000Z",
+      "deleted_at": null
+    },
+    {
+      "id": "att-4",
+      "schedule_id": "sched-7",
+      "teacher_id": "teacher-3",
+      "tanggal": "2026-06-29",
+      "status": "Izin",
+      "catatan": "Ada keperluan keluarga di luar kota, tugas sudah dititipkan",
+      "created_at": "2026-06-29T07:09:12.000Z",
+      "deleted_at": null
+    }
+  ],
+  "attendance_validation": [
+    {
+      "id": "val-1",
+      "attendance_id": "att-1",
+      "foto_url": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=60",
+      "latitude": -7.291250000000001,
+      "longitude": 110.18330999999999,
+      "ip": "192.168.1.100",
+      "jarak": 15,
+      "gps_valid": true,
+      "ip_valid": true,
+      "selfie_valid": true,
+      "deleted_at": null
+    },
+    {
+      "id": "val-2",
+      "attendance_id": "att-2",
+      "foto_url": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=60",
+      "latitude": -7.2914,
+      "longitude": 110.18346,
+      "ip": "192.168.1.100",
+      "jarak": 8,
+      "gps_valid": true,
+      "ip_valid": true,
+      "selfie_valid": true,
+      "deleted_at": null
+    },
+    {
+      "id": "val-3",
+      "attendance_id": "att-3",
+      "foto_url": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&auto=format&fit=crop&q=60",
+      "latitude": -7.29115,
+      "longitude": 110.18351,
+      "ip": "192.168.1.102",
+      "jarak": 24,
+      "gps_valid": true,
+      "ip_valid": true,
+      "selfie_valid": true,
+      "deleted_at": null
+    }
+  ],
+  "attendance_merge": [],
+  "settings": {
+    "id": "settings-1",
+    "nama_pondok": "Pondok Pesantren Al-Huda Kaloran",
+    "logo": "https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=120&auto=format&fit=crop&q=60",
+    "alamat": "Jl. KH. Wahid Hasyim No. 45, Kaloran, Temanggung, Jawa Tengah",
+    "radius_default": 100,
+    "jam_toleransi": 15,
+    "batas_keterlambatan": 30,
+    "password_minimum": 8,
+    "session_timeout": 168,
+    "izin_kamera_wajib": true,
+    "deleted_at": null
+  },
+  "attendance_logs": [
+    {
+      "id": "log-1",
+      "attendance_id": "att-1",
+      "aktivitas": "Melakukan presensi kehadiran di kelas MTs 2 PA B",
+      "status": "success",
+      "created_at": "2026-06-29T07:02:15.000Z",
+      "deleted_at": null
+    },
+    {
+      "id": "log-2",
+      "attendance_id": "att-2",
+      "aktivitas": "Melakukan presensi kehadiran di kelas MTs 2 PA A",
+      "status": "success",
+      "created_at": "2026-06-29T08:01:40.000Z",
+      "deleted_at": null
+    },
+    {
+      "id": "log-3",
+      "attendance_id": "att-3",
+      "aktivitas": "Melakukan presensi kehadiran di kelas MTs 2 PA A",
+      "status": "success",
+      "created_at": "2026-06-29T07:05:33.000Z",
+      "deleted_at": null
+    },
+    {
+      "id": "log-4",
+      "attendance_id": "att-4",
+      "aktivitas": "Mengajukan izin sakit/keperluan keluarga",
+      "status": "pending_verification",
+      "created_at": "2026-06-29T07:09:12.000Z",
+      "deleted_at": null
+    }
+  ]
+}

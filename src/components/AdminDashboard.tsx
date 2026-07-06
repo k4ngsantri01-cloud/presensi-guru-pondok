@@ -48,6 +48,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     | "cawu"
     | "hissoh"
     | "pengaturan"
+    | "status_sistem"
   >("dashboard");
 
   // Dynamic States
@@ -62,6 +63,11 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const [hissohs, setHissohs] = useState<Hissoh[]>([]);
   const [appSettings, setAppSettings] = useState<Settings | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Diagnostic State
+  const [diagnosticData, setDiagnosticData] = useState<any>(null);
+  const [diagnosticLoading, setDiagnosticLoading] = useState(false);
+  const [diagnosticError, setDiagnosticError] = useState<string | null>(null);
 
   // Search and Filters
   const [guruSearch, setGuruSearch] = useState("");
@@ -230,6 +236,22 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
       console.error("Gagal mengambil data admin:", error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // Diagnostic function
+  const fetchDiagnosticData = async () => {
+    setDiagnosticLoading(true);
+    setDiagnosticError(null);
+    try {
+      const response = await fetch("/api/diagnostic");
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const data = await response.json();
+      setDiagnosticData(data);
+    } catch (err) {
+      setDiagnosticError(err instanceof Error ? err.message : "Unknown error");
+    } finally {
+      setDiagnosticLoading(false);
     }
   };
 
@@ -1018,6 +1040,14 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
             }`}
           >
             <SettingsIcon className="w-4 h-4" /> Pengaturan Sistem
+          </button>
+          <button
+            onClick={() => setActiveTab("status_sistem")}
+            className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+              activeTab === "status_sistem" ? "bg-blue-700 text-white shadow-sm" : "text-slate-300 hover:bg-slate-800/60"
+            }`}
+          >
+            <Activity className="w-4 h-4" /> Status Sistem
           </button>
         </nav>
 
@@ -2154,6 +2184,153 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                     Simpan Semua Pengaturan
                   </button>
                 </form>
+              </motion.div>
+            )}
+
+            {/* 10. STATUS SISTEM */}
+            {activeTab === "status_sistem" && (
+              <motion.div
+                key="status_sistem"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="space-y-6"
+              >
+                <div>
+                  <h2 className="text-lg font-bold text-gray-900">Status Sistem Supabase</h2>
+                  <p className="text-xs text-gray-500">Periksa kesehatan koneksi dan konfigurasi Supabase secara realtime.</p>
+                </div>
+
+                <button
+                  onClick={fetchDiagnosticData}
+                  disabled={diagnosticLoading}
+                  className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-sm transition-colors cursor-pointer"
+                >
+                  {diagnosticLoading ? "Menguji..." : "Test Koneksi"}
+                </button>
+
+                {diagnosticError && (
+                  <div className="bg-red-50 border border-red-200 p-4 rounded-xl">
+                    <p className="text-xs font-semibold text-red-700">Error:</p>
+                    <p className="text-xs text-red-600 mt-1">{diagnosticError}</p>
+                  </div>
+                )}
+
+                {diagnosticData && (
+                  <div className="space-y-4">
+                    {/* Environment */}
+                    <div className="bg-white border border-gray-100 p-4 rounded-xl">
+                      <h3 className="font-bold text-xs uppercase text-gray-600 mb-3">Environment</h3>
+                      <div className="space-y-2 text-xs">
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Node Environment:</span>
+                          <span className="font-mono">{diagnosticData.environment.nodeEnv}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">App Environment:</span>
+                          <span className="font-mono">{diagnosticData.environment.appEnv}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Port:</span>
+                          <span className="font-mono">{diagnosticData.environment.port}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Supabase Status */}
+                    <div className="bg-white border border-gray-100 p-4 rounded-xl">
+                      <h3 className="font-bold text-xs uppercase text-gray-600 mb-3">Supabase Configuration</h3>
+                      <div className="space-y-2 text-xs">
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-600">URL Configured:</span>
+                          <span className={`font-semibold ${diagnosticData.supabase.urlConfigured ? "text-green-600" : "text-red-600"}`}>
+                            {diagnosticData.supabase.url}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-600">Anon Key Configured:</span>
+                          <span className={`font-semibold ${diagnosticData.supabase.anonKeyConfigured ? "text-green-600" : "text-red-600"}`}>
+                            {diagnosticData.supabase.anonKey}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-600">Service Role Key Configured:</span>
+                          <span className={`font-semibold ${diagnosticData.supabase.serviceRoleKeyConfigured ? "text-green-600" : "text-red-600"}`}>
+                            {diagnosticData.supabase.serviceRoleKey}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-600">Client Created:</span>
+                          <span className={`font-semibold ${diagnosticData.supabase.clientCreated ? "text-green-600" : "text-red-600"}`}>
+                            {diagnosticData.supabase.clientCreated ? "✓ Yes" : "✗ No"}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-600">Database Reachable:</span>
+                          <span className={`font-semibold ${diagnosticData.supabase.databaseReachable ? "text-green-600" : "text-red-600"}`}>
+                            {diagnosticData.supabase.databaseReachable ? "🟢 Connected" : "🔴 Disconnected"}
+                          </span>
+                        </div>
+                        {diagnosticData.supabase.databaseReachableError && (
+                          <div className="bg-red-50 p-2 rounded border border-red-200 mt-2">
+                            <p className="text-xs text-red-700">{diagnosticData.supabase.databaseReachableError}</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Local Database */}
+                    <div className="bg-white border border-gray-100 p-4 rounded-xl">
+                      <h3 className="font-bold text-xs uppercase text-gray-600 mb-3">Local Database</h3>
+                      <div className="space-y-2 text-xs">
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Database Loaded:</span>
+                          <span className={`font-semibold ${diagnosticData.database.localDbLoaded ? "text-green-600" : "text-red-600"}`}>
+                            {diagnosticData.database.localDbLoaded ? "✓ Yes" : "✗ No"}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Users Count:</span>
+                          <span className="font-mono">{diagnosticData.database.usersCount}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Teachers Count:</span>
+                          <span className="font-mono">{diagnosticData.database.teachersCount}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Schedules Count:</span>
+                          <span className="font-mono">{diagnosticData.database.schedulesCount}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Attendance Count:</span>
+                          <span className="font-mono">{diagnosticData.database.attendanceCount}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* AI & Features */}
+                    <div className="bg-white border border-gray-100 p-4 rounded-xl">
+                      <h3 className="font-bold text-xs uppercase text-gray-600 mb-3">Features & AI</h3>
+                      <div className="space-y-2 text-xs">
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">AI Provider:</span>
+                          <span className="font-mono">{diagnosticData.features.aiProvider}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">AI API Key Configured:</span>
+                          <span className={`font-semibold ${diagnosticData.features.aiApiKeyConfigured ? "text-green-600" : "text-yellow-600"}`}>
+                            {diagnosticData.features.aiApiKeyConfigured ? "✓ Yes" : "⚠ No"}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Diagnostic Timestamp */}
+                    <div className="text-center text-xs text-gray-500">
+                      Last checked: {new Date(diagnosticData.timestamp).toLocaleString('id-ID')}
+                    </div>
+                  </div>
+                )}
               </motion.div>
             )}
           </AnimatePresence>
