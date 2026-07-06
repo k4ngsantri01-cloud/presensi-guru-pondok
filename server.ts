@@ -84,13 +84,17 @@ app.get("/api/supabase/status", (req, res) => {
 
 // Comprehensive Diagnostic Endpoint
 app.get("/api/diagnostic", async (req, res) => {
+  const state = loadDB();
+
   const diagnostic = {
+
     timestamp: new Date().toISOString(),
     environment: {
       nodeEnv: process.env.NODE_ENV || "development",
       appName: process.env.VITE_APP_NAME || "Presensi Guru Pondok",
       appEnv: process.env.VITE_APP_ENV || "development",
-      port: PORT
+      port: PORT,
+      cwd: process.cwd()
     },
     supabase: {
       urlConfigured: Boolean(process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL),
@@ -99,14 +103,17 @@ app.get("/api/diagnostic", async (req, res) => {
       anonKey: process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY ? "✓ Set" : "✗ Missing",
       serviceRoleKeyConfigured: Boolean(process.env.VITE_SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY),
       serviceRoleKey: process.env.VITE_SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY ? "✓ Set" : "✗ Missing",
-      clientCreated: Boolean(createSupabaseServerClient())
+      clientCreated: Boolean(createSupabaseServerClient()),
+      databaseReachable: false,
+      databaseReachableError: null as string | null,
+      tableProbe: "users"
     },
     database: {
-      localDbLoaded: Boolean(db && db.users),
-      usersCount: db ? db.users?.length || 0 : 0,
-      teachersCount: db ? db.teachers?.length || 0 : 0,
-      schedulesCount: db ? db.schedule?.length || 0 : 0,
-      attendanceCount: db ? db.attendance?.length || 0 : 0
+      localDbLoaded: Boolean(state && state.users),
+      usersCount: state ? state.users?.length || 0 : 0,
+      teachersCount: state ? state.teachers?.length || 0 : 0,
+      schedulesCount: state ? state.schedule?.length || 0 : 0,
+      attendanceCount: state ? state.attendance?.length || 0 : 0
     },
     features: {
       aiProvider: process.env.VITE_AI_PROVIDER || "supabase",
@@ -114,27 +121,28 @@ app.get("/api/diagnostic", async (req, res) => {
     }
   };
 
-  // Test Supabase connectivity if client is available
   const client = createSupabaseServerClient();
   if (client) {
     try {
-      const { data, error } = await client.from("users").select("count", { count: "exact" }).limit(1);
+      // Lightweight probe: just try to select 1 row.
+      const { error } = await client.from("users").select("id").limit(1);
       diagnostic.supabase.databaseReachable = !error;
       diagnostic.supabase.databaseReachableError = error ? error.message : null;
     } catch (err) {
       diagnostic.supabase.databaseReachable = false;
-      diagnostic.supabase.databaseReachableError = err instanceof Error ? err.message : "Unknown error";
+      diagnostic.supabase.databaseReachableError = err instanceof Error ? err.message : "Unknown error" as string;
     }
   } else {
     diagnostic.supabase.databaseReachable = false;
-    diagnostic.supabase.databaseReachableError = "Supabase client not initialized - missing URL or keys";
+    diagnostic.supabase.databaseReachableError =
+      "Supabase client not initialized - missing URL or keys" as string;
   }
 
   res.json(diagnostic);
 });
 
-// Initialize DB on boot
-const db = loadDB();
+
+
 
 // 1. AUTH ENDPOINTS
 app.get("/api/auth/search-teachers", (req, res) => {
@@ -780,7 +788,7 @@ app.post("/api/attendance", (req, res) => {
   const classLat = classroom?.latitude !== undefined ? classroom.latitude : -7.29135;
   const classLng = classroom?.longitude !== undefined ? classroom.longitude : 110.18341;
 
-  if (latitude && longitude) {
+  if (latitude !== undefined && longitude !== undefined) {
     distance = calculateHaversine(latitude, longitude, classLat, classLng);
     const radiusThreshold = classroom?.radius !== undefined ? Number(classroom.radius) : (sched.radius !== undefined ? Number(sched.radius) : (state.settings?.radius_default || 100));
     isGpsValid = distance <= radiusThreshold;
@@ -791,8 +799,9 @@ app.post("/api/attendance", (req, res) => {
     return res.status(400).json({ error: "Lokasi GPS HP diperlukan untuk presensi!" });
   }
 
-  const isIpValid = true; // Placeholder for IP check
-  const isSelfieValid = !!selfie_base64;
+  const isIpValid = typeof ip === "string" && ip.trim().length > 0; // minimal guard
+  const isSelfieValid = typeof selfie_base64 === "string" && selfie_base64.trim().length > 0;
+
 
   const validationId = "val-" + generateUUID();
   const fotoUrl = selfie_base64 || "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=60";
@@ -1202,8 +1211,15 @@ app.get("/api/stats", (req, res) => {
 
   // presensi sukses: presensi guru ketika masuk jam pelajaran dan setiap satu presensi terhitung satu (status === Hadir)
   const todayAttendances = state.attendance.filter((a) => a.tanggal === todayStr && a.deleted_at === null);
-  const totalPresensiCount = todayAttendances.filter((a) => a.status === "Hadir").length;
-  const izinCount = todayAttendances.filter((a) => a.status === "Izin").length;
+
+  const normalizeAttendanceStatus = (status: any): string => {
+    const s = (typeof status === "string" ? status : "").toLowerCase();
+    if (s === "pending_verification" || s === "pendingverification" || s === "pending" || s === "pending_verifikasi") return "Pending";
+    return typeof status === "string" ? status : "";
+  };
+
+  const totalPresensiCount = todayAttendances.filter((a) => normalizeAttendanceStatus(a.status) === "Hadir").length;
+  const izinCount = todayAttendances.filter((a) => normalizeAttendanceStatus(a.status) === "Izin").length;
 
   // Total presensi Hari ini: semua mata pelajaran yang ada pada hari masuk sekolah
   const totalPresensiHariIni = schedsToday.length;
@@ -1215,7 +1231,10 @@ app.get("/api/stats", (req, res) => {
   const belumPresensiCount = Math.max(0, totalPresensiHariIni - inputPresensiHariIni);
 
   // System notification counts
-  const notificationIzinPending = todayAttendances.filter((a) => a.status === "Pending" || a.status === "Izin").length;
+  const notificationIzinPending = todayAttendances.filter(
+    (a) => normalizeAttendanceStatus(a.status) === "Pending" || normalizeAttendanceStatus(a.status) === "Izin"
+  ).length;
+
 
   // Latest 10 activities joined with teacher name
   const logs = [...state.attendance_logs]
@@ -1320,4 +1339,12 @@ async function startServer() {
   });
 }
 
+// Global Express error handler (prevents crash on sync/async route failures)
+app.use((err: any, req: any, res: any, next: any) => {
+  console.error("Server error:", err);
+  if (res.headersSent) return next(err);
+  res.status(500).json({ error: "Internal Server Error" });
+});
+
 startServer();
+
